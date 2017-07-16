@@ -22,6 +22,7 @@
 #import <React/RCTLog.h>
 #import <React/RCTEventDispatcher.h>
 #import <React/RCTBridge.h>
+#import <React/RCTUtils.h>
 #else
 #import "RCTRootView.h"
 #import "RCTLog.h"
@@ -245,10 +246,11 @@ NSOperationQueue *taskQueue;
     [task resume];
 
     // network status indicator
-    if([[options objectForKey:CONFIG_INDICATOR] boolValue] == YES)
-        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-    __block UIApplication * app = [UIApplication sharedApplication];
-
+    if([[options objectForKey:CONFIG_INDICATOR] boolValue] == YES) {
+        RCTExecuteOnMainQueue(^{
+            [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+        });
+    }    
 }
 
 // #115 Invoke fetch.expire event on those expired requests so that the expired event can be handled
@@ -482,9 +484,11 @@ NSOperationQueue *taskQueue;
     NSString * errMsg = [NSNull null];
     NSString * respStr = [NSNull null];
     NSString * rnfbRespType = @"";
-
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-
+    
+     RCTExecuteOnMainQueue(^{
+         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+     });
+    
     if(respInfo == nil)
     {
         respInfo = [NSNull null];
