@@ -40,6 +40,7 @@ type RNFetchBlobNative = {
   unlink : (path:string, callback: (err:any) => void) => void,
   removeSession : (paths:Array<string>, callback: (err:any) => void) => void,
   ls : (path:string, callback: (err:any) => void) => void,
+  rm: (path: string) => Promise<void>
 };
 
 type RNFetchBlobResponseInfo = {

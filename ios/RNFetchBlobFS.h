@@ -75,6 +75,7 @@
 + (void) writeAssetToPath:(ALAssetRepresentation * )rep dest:(NSString *)dest;
 + (void) readStream:(NSString *)uri encoding:(NSString * )encoding bufferSize:(int)bufferSize tick:(int)tick streamId:(NSString *)streamId bridgeRef:(RCTBridge *)bridgeRef;
 + (void) df:(RCTResponseSenderBlock)callback;
++ (void) rm:(NSString *) path resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject;
 
 // constructor
 - (id) init;

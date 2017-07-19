@@ -550,6 +550,21 @@ NSMutableDictionary *fileStreams = nil;
     }];
 }
 
+# pragma mark - delete
+
++ (void) rm:(NSString *) path resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject;
+{
+    [[self class] getPathFromUri:path completionHandler:^(NSString *path, ALAssetRepresentation *asset) {
+        NSError *error = nil;
+        [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+        if (error) {
+            reject(error.code, [NSString stringWithFormat: @"Could not remove file at path:", path], @[error]);
+        } else {
+            resolve(nil);
+        }
+    }];
+}
+
 # pragma mark - open file stream
 
 // Create file stream for write data

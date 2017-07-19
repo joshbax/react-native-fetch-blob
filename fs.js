@@ -365,6 +365,10 @@ function df():Promise<{ free : number, total : number }> {
   })
 }
 
+function rm(path: string): Promise<void> {
+  return RNFetchBlob.rm(path);
+}
+
 export default {
   RNFetchBlobSession,
   unlink,
