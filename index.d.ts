@@ -1,12 +1,12 @@
 
 declare module "react-native-fetch-blob" {
-   
+
     interface FetchPromiseOptions {
         interval?: number;
         count?: number;
     }
 
-     class FetchPromise<T> extends Promise<T> {
+    class FetchPromise<T> extends Promise<T> {
         public progress(callback: (received: number, total: number) => void): Promise<T>;
         public progress(options: FetchPromiseOptions, callback?: (received: number, total: number) => void): Promise<T>;
 
@@ -14,16 +14,16 @@ declare module "react-native-fetch-blob" {
         public uploadProgress(options: FetchPromiseOptions, callback?: (written: number, total: number) => void): Promise<T>;
     }
 
-     interface RNFetchBlobStream {
+    interface RNFetchBlobStream {
         onData(fn: (chunk: string | number[]) => void): void;
         onError(fn: (err: Error) => void): void;
         onEnd(fn: () => void): void;
     }
-     interface RNFetchBlobReadStream extends RNFetchBlobStream {
+    interface RNFetchBlobReadStream extends RNFetchBlobStream {
         open: () => void;
     }
 
-     interface RNFetchBlobWriteStream extends RNFetchBlobStream {
+    interface RNFetchBlobWriteStream extends RNFetchBlobStream {
         write: (data: string) => Promise<void>;
         close: () => Promise<void>;
     }
@@ -36,20 +36,20 @@ declare module "react-native-fetch-blob" {
         type: "directory" | "file";
     }
 
-     interface FS {
-         dirs: {
-             DocumentDir: string;
-             CacheDir: string;
-             PictureDir: string;
-             MusicDir: string;
-             MovieDir: string;
-             DownloadDir: string;
-             DCIMDir: string;
-             SDCardDir: string;
-             SDCardApplicationDir: string;
-             MainBundleDir: string;
-             LibraryDir: string;
-         }
+    interface FS {
+        dirs: {
+            DocumentDir: string;
+            CacheDir: string;
+            PictureDir: string;
+            MusicDir: string;
+            MovieDir: string;
+            DownloadDir: string;
+            DCIMDir: string;
+            SDCardDir: string;
+            SDCardApplicationDir: string;
+            MainBundleDir: string;
+            LibraryDir: string;
+        }
 
         createFile: (path: string, data: string, encoding: 'base64' | 'ascii' | 'utf8') => Promise<void>;
 
@@ -77,7 +77,7 @@ declare module "react-native-fetch-blob" {
         df(): Promise<{ free: number, total: number }>;
     }
 
-     interface RNFetchBlobConfig {
+    interface RNFetchBlobConfig {
         fileCache?: boolean;
         path?: string,
         appendExt?: string;
@@ -86,7 +86,7 @@ declare module "react-native-fetch-blob" {
         indicator?: boolean;
     }
 
-     interface RNFetchBlobResponseInfo {
+    interface RNFetchBlobResponseInfo {
         taskId: string;
         state: number,
         headers: any;
@@ -95,9 +95,8 @@ declare module "react-native-fetch-blob" {
         rnfbEncode: 'path' | 'base64' | 'ascii' | 'utf8';
     }
 
-     class FetchBlob {
+    class FetchBlob {
 
-    
         public fs: FS;
 
         /**
@@ -158,7 +157,7 @@ declare module "react-native-fetch-blob" {
 
         wrap(path: string): string;
     }
-    
+
     const RNFetchBlob: FetchBlob;
     export = RNFetchBlob;
 }
