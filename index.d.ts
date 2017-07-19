@@ -1,12 +1,12 @@
 
 declare module "react-native-fetch-blob" {
 
-    export interface FetchPromiseOptions {
+    interface FetchPromiseOptions {
         interval?: number;
         count?: number;
     }
 
-    export class FetchPromise<T> extends Promise<T> {
+    class FetchPromise<T> extends Promise<T> {
         public progress(callback: (received: number, total: number) => void): Promise<T>;
         public progress(options: FetchPromiseOptions, callback?: (received: number, total: number) => void): Promise<T>;
 
@@ -14,21 +14,21 @@ declare module "react-native-fetch-blob" {
         public uploadProgress(options: FetchPromiseOptions, callback?: (written: number, total: number) => void): Promise<T>;
     }
 
-    export interface RNFetchBlobStream {
+    interface RNFetchBlobStream {
         onData(fn: (chunk: string | number[]) => void): void;
         onError(fn: (err: Error) => void): void;
         onEnd(fn: () => void): void;
     }
-    export interface RNFetchBlobReadStream extends RNFetchBlobStream {
+    interface RNFetchBlobReadStream extends RNFetchBlobStream {
         open: () => void;
     }
 
-    export interface RNFetchBlobWriteStream extends RNFetchBlobStream {
+    interface RNFetchBlobWriteStream extends RNFetchBlobStream {
         write: (data: string) => Promise<void>;
         close: () => Promise<void>;
     }
 
-    export interface RNFetchBlobFile {
+    interface RNFetchBlobFile {
         size: number;
         filename: string;
         path: string;
@@ -36,7 +36,7 @@ declare module "react-native-fetch-blob" {
         type: "directory" | "file";
     }
 
-    export interface FS {
+    interface FS {
         dirs: {
             DocumentDir: string;
             CacheDir: string;
@@ -75,10 +75,9 @@ declare module "react-native-fetch-blob" {
         exists(path: string): Promise<boolean[]>;
         isDir(path: string): Promise<boolean>;
         df(): Promise<{ free: number, total: number }>;
-        rm(path: string): Promise<void>;
     }
 
-    export interface RNFetchBlobConfig {
+    interface RNFetchBlobConfig {
         fileCache?: boolean;
         path?: string,
         appendExt?: string;
@@ -87,7 +86,7 @@ declare module "react-native-fetch-blob" {
         indicator?: boolean;
     }
 
-    export interface RNFetchBlobResponseInfo {
+    interface RNFetchBlobResponseInfo {
         taskId: string;
         state: number,
         headers: any;
@@ -159,5 +158,6 @@ declare module "react-native-fetch-blob" {
         wrap(path: string): string;
     }
 
-    export const RNFetchBlob: FetchBlob;
+    const RNFetchBlob: FetchBlob;
+    export = RNFetchBlob;
 }
