@@ -70,7 +70,7 @@ declare module "react-native-fetch-blob" {
         cp(path: string, dest: string): Promise<boolean>;
         mv(path: string, dest: string): Promise<boolean>;
         lstat(path: string): Promise<Array<RNFetchBlobFile>>;
-        ls(path: string): Promise<Array<String>>;
+        ls(path: string): Promise<Array<string>>;
         unlink(path: string): Promise<void>;
         exists(path: string): Promise<boolean[]>;
         isDir(path: string): Promise<boolean>;
