@@ -1,34 +1,39 @@
 
 declare module "react-native-fetch-blob" {
 
-    interface FetchPromiseOptions {
-        interval?: number;
-        count?: number;
+    export interface RNFetchBlobConfig {
+        fileCache?: boolean;
+        path?: string,
+        appendExt?: string;
+        session: string;
+        addAndroidDownloads?: any;
+        indicator?: boolean;
     }
 
-    class FetchPromise<T> extends Promise<T> {
-        public progress(callback: (received: number, total: number) => void): Promise<T>;
-        public progress(options: FetchPromiseOptions, callback?: (received: number, total: number) => void): Promise<T>;
-
-        public uploadProgress(callback: (received: number, total: number) => void): Promise<T>;
-        public uploadProgress(options: FetchPromiseOptions, callback?: (written: number, total: number) => void): Promise<T>;
+    export interface RNFetchBlobResponseInfo {
+        taskId: string;
+        state: number,
+        headers: any;
+        status: number;
+        respType: 'text' | 'blob' | '' | 'json';
+        rnfbEncode: 'path' | 'base64' | 'ascii' | 'utf8';
     }
 
-    interface RNFetchBlobStream {
+    export interface RNFetchBlobStream {
         onData(fn: (chunk: string | number[]) => void): void;
         onError(fn: (err: Error) => void): void;
         onEnd(fn: () => void): void;
     }
-    interface RNFetchBlobReadStream extends RNFetchBlobStream {
+    export interface RNFetchBlobReadStream extends RNFetchBlobStream {
         open: () => void;
     }
 
-    interface RNFetchBlobWriteStream extends RNFetchBlobStream {
+    export interface RNFetchBlobWriteStream extends RNFetchBlobStream {
         write: (data: string) => Promise<void>;
         close: () => Promise<void>;
     }
 
-    interface RNFetchBlobFile {
+    export interface RNFetchBlobFile {
         size: number;
         filename: string;
         path: string;
@@ -36,7 +41,34 @@ declare module "react-native-fetch-blob" {
         type: "directory" | "file";
     }
 
-    interface FS {
+    export interface FetchPromiseOptions {
+        interval?: number;
+        count?: number;
+    }
+
+    export class FetchPromise<T> extends Promise<T> {
+        public progress(callback: (received: number, total: number) => void): Promise<T>;
+        public progress(options: FetchPromiseOptions, callback?: (received: number, total: number) => void): Promise<T>;
+
+        public uploadProgress(callback: (received: number, total: number) => void): Promise<T>;
+        public uploadProgress(options: FetchPromiseOptions, callback?: (written: number, total: number) => void): Promise<T>;
+    }
+
+    export class RNFetchBlobSession {
+
+        public static getSession(name: string): any;
+        public static setSession(name: string, val: any): void;
+        public static removeSession(name: string): void;
+
+        constructor(name: string, list: Array<string>);
+
+        add(path: string): RNFetchBlobSession;
+        remove(path: string): RNFetchBlobSession;
+        list(): Array<string>;
+        dispose(): Promise<void>;
+    }
+
+    export interface FS {
         dirs: {
             DocumentDir: string;
             CacheDir: string;
@@ -50,6 +82,14 @@ declare module "react-native-fetch-blob" {
             MainBundleDir: string;
             LibraryDir: string;
         }
+        /**
+         * Get a file cache session
+         * @param  {string} name Stream ID
+         * @return {RNFetchBlobSession}
+         */
+        session(name: string): RNFetchBlobSession;
+
+        asset(path: string): string;
 
         createFile: (path: string, data: string, encoding: 'base64' | 'ascii' | 'utf8') => Promise<void>;
 
@@ -59,40 +99,60 @@ declare module "react-native-fetch-blob" {
         writeStream: (path: string, encoding: 'utf8' | 'ascii' | 'base64', append?: boolean) => Promise<RNFetchBlobWriteStream>;
         writeFile: (path: string, data: string | Array<number>, encoding: 'utf8' | 'ascii' | 'base64') => Promise<number>;
 
+        appendFile(path: string, data: string | Array<number>, encoding: 'utf8' | 'ascii' | 'base64'): Promise<number>;
+
         /**
          * Create a directory.
          * @param  {string} path Path of directory to be created
          * @return {Promise}
          */
         mkdir(path: string): Promise<void>;
+        pathForAppGroup(groupName: string): Promise<string>;
 
         stat(path: string): Promise<RNFetchBlobFile>;
+
+        /**
+         * Android only method, request media scanner to scan the file.
+         * @param  {Array<Object<string, string>>} Array contains Key value pairs with key `path` and `mime`.
+         * @return {Promise}
+         */
+        scanFile(pairs: any): Promise<void>;
+
         cp(path: string, dest: string): Promise<boolean>;
         mv(path: string, dest: string): Promise<boolean>;
         lstat(path: string): Promise<Array<RNFetchBlobFile>>;
         ls(path: string): Promise<Array<string>>;
         unlink(path: string): Promise<void>;
         exists(path: string): Promise<boolean[]>;
+
+        /**
+         * Slice a file into another file, generally for support Blob implementation.
+         */
+        slice(src: string, dest: string, start: number, end: number): Promise<string>;
         isDir(path: string): Promise<boolean>;
         df(): Promise<{ free: number, total: number }>;
     }
 
-    interface RNFetchBlobConfig {
-        fileCache?: boolean;
-        path?: string,
-        appendExt?: string;
-        session: string;
-        addAndroidDownloads?: any;
-        indicator?: boolean;
-    }
-
-    interface RNFetchBlobResponseInfo {
+    export interface FetchBlobResponse {
+        type: 'base64' | 'path' | 'utf8';
         taskId: string;
-        state: number,
-        headers: any;
-        status: number;
-        respType: 'text' | 'blob' | '' | 'json';
-        rnfbEncode: 'path' | 'base64' | 'ascii' | 'utf8';
+        respInfo: RNFetchBlobResponseInfo;
+        data: any;
+
+        info: () => RNFetchBlobResponseInfo;
+        array: () => Promise<any[]>;
+        blob: () => Promise<Blob>;
+        text: () => (string | Promise<any>);
+
+        json: () => any;
+        base64: () => (string | Promise<any>);
+
+        flush: () => void;
+        path: () => void;
+        session: (name: string) => (RNFetchBlobSession | null);
+        readStream: (encode: 'base64' | 'utf8' | 'ascii') => (RNFetchBlobStream | null);
+
+        readFile: (encode: 'base64' | 'utf8' | 'ascii') => Promise<any>;
     }
 
     class FetchBlob {
@@ -137,9 +197,9 @@ declare module "react-native-fetch-blob" {
          * @param  {any} body       Data to put or post to file systen.
          * @return {Promise}
          */
-        fetchFile(options: RNFetchBlobConfig, method: string, url: string, headers?: any, body?: any): FetchPromise<any>;
-        fetchFile(method: string, url: string, headers?: any, body?: any): FetchPromise<any>;
-        fetchFile(method: string, url: string, body?: any): FetchPromise<any>;
+        fetchFile(options: RNFetchBlobConfig, method: string, url: string, headers?: any, body?: any): FetchPromise<FetchBlobResponse>;
+        fetchFile(method: string, url: string, headers?: any, body?: any): FetchPromise<FetchBlobResponse>;
+        fetchFile(method: string, url: string, body?: any): FetchPromise<FetchBlobResponse>;
 
         /**
         * Create a HTTP request by settings, the `this` context is a `RNFetchBlobConfig` object.
@@ -153,11 +213,11 @@ declare module "react-native-fetch-blob" {
         *         This promise instance also contains a Customized method `progress`for
         *         register progress event handler.
         */
-        fetch(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, headers: any, body?: any): FetchPromise<any>;
+        fetch(method: 'GET' | 'POST' | 'PUT' | 'DELETE', url: string, headers: any, body?: string): FetchPromise<FetchBlobResponse>;
 
         wrap(path: string): string;
     }
 
     const RNFetchBlob: FetchBlob;
-    export = RNFetchBlob;
+    export default RNFetchBlob;
 }
